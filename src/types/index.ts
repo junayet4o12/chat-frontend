@@ -5,7 +5,7 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 };
 
 export type TUser = {
-  _id?: string;
+  id?: string;
   name: string;
   email: string;
   role: "admin" | "user";
@@ -31,7 +31,7 @@ export interface Friend {
 
 
 export type TProduct = {
-  _id: string;
+  id: string;
   title: string;
   description: string;
   photos: { thumbnail: string; cover: string };

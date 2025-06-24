@@ -36,14 +36,14 @@ const MessageBubble: React.FC<{
 
     return (
         <div
-            className={`flex ${message.isMe ? 'justify-end' : 'justify-start'} animate-fadeInUp`}
+            className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-fadeInUp`}
             style={{ animationDelay: `${index * 50}ms` }}
         >
-            <div className={`max-w-[85%] ${message.isMe ? 'order-2' : 'order-1'}`}>
+            <div className={`max-w-[85%] ${isMe ? 'order-2' : 'order-1'}`}>
                 <div
                     className={`
             px-4 py-2 shadow-md transition-all duration-200 hover:shadow-lg
-            ${message.isMe
+            ${isMe
                             ? 'bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-2xl rounded-br-md'
                             : 'bg-card text-foreground rounded-2xl rounded-bl-md border border-border'
                         }
@@ -51,9 +51,9 @@ const MessageBubble: React.FC<{
                 >
                     <p className="text-sm whitespace-pre-wrap">{renderMessageContent(message.content)}</p>
                 </div>
-                <div className={`flex items-center mt-1 space-x-1 ${message.isMe ? 'justify-end' : 'justify-start'}`}>
-                    <p className="text-xs text-muted-foreground">{formatMessageTime(message.timestamp)}</p>
-                    {message.isMe && <MessageStatus status={message.status} />}
+                <div className={`flex items-center mt-1 space-x-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
+                    <p className="text-xs text-muted-foreground">{formatMessageTime(message.createdAt)}</p>
+                    {isMe && <MessageStatus status={message.status} />}
                 </div>
             </div>
         </div>

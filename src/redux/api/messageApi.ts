@@ -8,6 +8,7 @@ const messageApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Message"],
     }),
 
     getConversation: builder.query({
@@ -16,6 +17,7 @@ const messageApi = baseApi.injectEndpoints({
         method: "GET",
         params: queryParams,
       }),
+      providesTags: ["Message"],
     }),
 
     markMessageAsRead: builder.mutation({
@@ -23,6 +25,7 @@ const messageApi = baseApi.injectEndpoints({
         url: `/messages/mark-read/${messageId}`,
         method: "PATCH",
       }),
+      invalidatesTags: ["Message"],
     }),
 
     deleteMessage: builder.mutation({
@@ -30,6 +33,7 @@ const messageApi = baseApi.injectEndpoints({
         url: `/messages/delete/${messageId}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Message"],
     }),
   }),
 });

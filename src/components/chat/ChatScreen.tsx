@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ChatHeader from "./CartHeader";
 import MessageBubble from "./MessageBubble";
-import MessageInput from "./MessageAnput";
+import MessageInput from "./MessageInput";
 import { useSearchParams } from "next/navigation";
 import { useGetSingleUserQuery } from "@/src/redux/api/userApi";
 import { useGetConversationQuery } from "@/src/redux/api/messageApi";
@@ -21,7 +21,6 @@ const ChatScreen: React.FC<{
     const searchParams = useSearchParams();
     const friendId = searchParams.get('friendId');
     const [newMessage, setNewMessage] = useState('');
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     console.log(friendId, 'fdfswd');
 
@@ -72,7 +71,6 @@ const ChatScreen: React.FC<{
                 message={newMessage}
                 onChange={setNewMessage}
                 onSend={handleSendMessage}
-                onEmojiClick={() => setShowEmojiPicker(!showEmojiPicker)}
             />
         </div>
     );
