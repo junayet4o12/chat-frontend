@@ -5,6 +5,7 @@ import MessageInput from "./MessageInput";
 import { useSearchParams } from "next/navigation";
 import { useGetSingleUserQuery } from "@/src/redux/api/userApi";
 import { useGetConversationQuery } from "@/src/redux/api/messageApi";
+import { socket } from "@/src/lib/socket";
 
 interface Message {
     id: number;
@@ -15,14 +16,11 @@ interface Message {
     status: 'sending' | 'sent' | 'delivered' | 'read';
 }
 
-const ChatScreen: React.FC<{
-    messages: Message[];
-}> = ({ messages }) => {
+const ChatScreen= () => {
+    const [localMessages, setLocalMessages] = useState<Message[]>([]);
     const searchParams = useSearchParams();
     const friendId = searchParams.get('friendId');
-    const [newMessage, setNewMessage] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    console.log(friendId, 'fdfswd');
 
     const { data, isLoading } = useGetSingleUserQuery(friendId as string, {
         skip: !friendId
@@ -32,6 +30,27 @@ const ChatScreen: React.FC<{
     });
     const friend = data?.data
     const conversation = conversationData?.data
+
+    useEffect(() => {
+        const handleMessage = (message: Message) => {
+            console.log("Received message: ", message);
+            setLocalMessages(prev => [...prev, message]);
+        };
+
+        socket.on('message', handleMessage);
+
+        return () => {
+            socket.off('message', handleMessage);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (conversation) {
+            setLocalMessages(conversation);
+        }
+    }, [conversation]);
+
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({
             behavior: 'smooth',
@@ -40,38 +59,23 @@ const ChatScreen: React.FC<{
     };
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [localMessages]);
     if (isLoading || conversationIsLoading) {
         return ''
     };
-    console.log(data, conversation);
-
-
-
-
-
-    const handleSendMessage = () => {
-        if (newMessage.trim()) {
-            setNewMessage('');
-        }
-    };
     return (
-        <div className="flex flex-col h-full relative">
+        <div className="flex flex-col h-full relative ">
             <ChatHeader friend={friend} />
 
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-background to-accent/20">
-                {conversation?.map((message, index) => (
+                {localMessages?.map((message, index) => (
                     <MessageBubble key={message.id} message={message} index={index} />
                 ))}
                 <div ref={messagesEndRef} />
             </div>
 
-            <MessageInput
-                message={newMessage}
-                onChange={setNewMessage}
-                onSend={handleSendMessage}
-            />
+            <MessageInput />
         </div>
     );
 };

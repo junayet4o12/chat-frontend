@@ -11,6 +11,7 @@ const MessageInput = () => {
     const searchParams = useSearchParams();
     const friendId = searchParams.get('friendId');
     const [sendMessage, { isLoading }] = useSendMessageMutation();
+    
     useEffect(() => {
         if (textareaRef.current) {
             textareaRef.current.style.height = 'auto';
@@ -19,6 +20,8 @@ const MessageInput = () => {
     }, [writtenMessage]);
 
     const handleSend = async () => {
+        if (!writtenMessage.trim()) return;
+        
         const data = {
             receiverId: friendId,
             content: writtenMessage
@@ -27,18 +30,17 @@ const MessageInput = () => {
             await sendMessage(data).unwrap()
             setWrittenMessage('')
         } catch (error) {
-
+            console.error('Failed to send message:', error);
         }
     }
 
-    const handleKeyPress = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
-
             e.preventDefault();
+            handleSend();
         }
+        // If Shift+Enter is pressed, allow default behavior (new line)
     };
-
-    console.log(isLoading);
 
     return (
         <div className="bg-card border-t border-border p-4 shadow-lg">
@@ -48,7 +50,7 @@ const MessageInput = () => {
                         ref={textareaRef}
                         value={writtenMessage}
                         onChange={(e) => setWrittenMessage(e.target.value)}
-                        onKeyPress={handleKeyPress}
+                        onKeyDown={handleKeyDown}
                         placeholder="Type a message..."
                         className="resize-none max-h-32 min-h-[40px] transition-all"
                         rows={1}

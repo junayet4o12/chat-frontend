@@ -2,14 +2,23 @@ import { ArrowLeft, MoreVertical, Phone, Video } from "lucide-react";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Friend } from "@/src/types";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const ChatHeader: React.FC<{
     friend: Friend;
 }> = ({ friend }) => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const handleClearFriendId = () => {
+        const params = new URLSearchParams(searchParams);
+        params.delete('friendId');
+
+        router.push(`${window.location.pathname}?${params.toString()}`);
+    };
     return (
         <div className="bg-card border-b border-border p-4 flex items-center justify-between shadow-sm">
             <div className="flex items-center space-x-3">
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" onClick={handleClearFriendId} >
                     <ArrowLeft className="w-5 h-5" />
                 </Button>
                 <div className="relative">

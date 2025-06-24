@@ -18,7 +18,6 @@ const MessageBubble: React.FC<{
     const searchParams = useSearchParams();
     const friendId = searchParams.get('friendId');
     const isMe = message.receiverId === friendId;
-    console.log(isMe);
     
     const renderMessageContent = (content: string) => {
         return content.split('\n').map((line, idx, array) => (

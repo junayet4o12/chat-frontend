@@ -6,6 +6,9 @@ import ChatScreen from './ChatScreen';
 import { useGetFriendsQuery } from '@/src/redux/api/userApi';
 import { Friend } from '@/src/types';
 import { useSearchParams } from 'next/navigation';
+import { connectSocket, registerSocket } from '@/src/lib/socket';
+import { useAppSelector } from '@/src/redux/store';
+import { useCurrentUser } from '@/src/redux/authSlice';
 
 interface Message {
   id: number;
@@ -51,6 +54,15 @@ export default function MobileChatInterface() {
   const { data, isLoading, error } = useGetFriendsQuery(undefined);
   const searchParams = useSearchParams();
   const friendId = searchParams.get('friendId');
+  const userId = useAppSelector(useCurrentUser)?.id
+
+  useEffect(() => {
+    connectSocket();
+    if (userId) {
+      registerSocket(userId);
+    }
+  }, [userId]);
+
   useEffect(() => {
     if (data?.data) {
       setFriends(data.data)
@@ -62,7 +74,7 @@ export default function MobileChatInterface() {
   }
 
   return (
-    <div className="h-screen bg-background max-w-md mx-auto border-x border-border">
+    <div className='h-screen flex justify-center items-center '>    <div className="h-screen max-h-[700px] bg-background w-full max-w-md mx-auto border-x border-border ">
       {!friendId ? (
         <FriendsList
           friends={friends}
@@ -88,6 +100,6 @@ export default function MobileChatInterface() {
           animation: fadeInUp 0.3s ease-out forwards;
         }
       `}</style>
-    </div>
+    </div></div>
   );
 }
